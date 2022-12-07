@@ -1,5 +1,5 @@
 {
-    "name": "bl/laravel-uploadable",
+    "name": "abdelrahmanbl/laravel-uploadable",
     "description": "this package adding behaviour to a model for self uploading images like avatar or any files type.",
     "type": "project",
     "autoload": {
