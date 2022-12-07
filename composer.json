@@ -1,0 +1,17 @@
+{
+    "name": "bl/laravel-uploadable",
+    "description": "this package adding behaviour to a model for self uploading images like avatar or any files type.",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Bl\\LaravelUploadable\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Abdelrahman Bl",
+            "email": "abdelrahmangamal990@gmail.com"
+        }
+    ],
+    "require": {}
+}
