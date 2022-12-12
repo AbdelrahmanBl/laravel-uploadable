@@ -2,32 +2,30 @@
 
 namespace Bl\LaravelUploadable\Traits;
 
-use Bl\LaravelUploadable\Services\UploadFileService;
+use Bl\LaravelUploadable\Actions\DeleteFile;
 use Illuminate\Http\UploadedFile;
 
 trait HasUploadable
 {
-    use CanUploadFile;
-
     /**
      * Upload file to specific directory and store the path in the table field.
      *
-     * @param  UploadedFile|null $file
-     * @param  string        $field
+     * @param  UploadedFile  $file
+     * @param  string        $key
      * @param  string        $dir
+     * @param  array         $attributes
      * @return string|null
      */
-    public function uploadFile(UploadedFile|null $file, string $field, string $dir): ?string
+    public function uploadFile(string $key, mixed $file, string $dir, array $attributes): ?string
     {
         if($file instanceof UploadedFile) {
 
-            (new UploadFileService)->deleteFile($field, $this->attributes);
+            (new DeleteFile)->handle($key, $attributes);
 
-            $path = $file->store($dir);
+            return $file->store($dir);
 
-            return parent::setAttribute($field, $path);
         }
 
-        return null;
+        return $attributes[$key];
     }
 }

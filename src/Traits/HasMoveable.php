@@ -7,8 +7,6 @@ use Illuminate\Http\UploadedFile;
 
 trait HasMoveable
 {
-    use CanUploadFile;
-
     /**
      * Upload file to specific directory and store the path in the table field.
      *
