@@ -26,6 +26,6 @@ trait HasUploadable
 
         }
 
-        return $attributes[$key];
+        return $attributes[$key] ?? null;
     }
 }
