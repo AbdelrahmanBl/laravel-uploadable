@@ -81,7 +81,7 @@ $user->avatar # this get a link of image that uploaded.
 Or you can set the data manually to the User model.
 ```
 $user = \App\Models\User::query()->create([
-    'avatar'    => $request->file('avatar')
+    'avatar'    => $request->file('avatar') ?? 'NULL'
 ]);
 
 $user->avatar # this get a link of image that uploaded.
