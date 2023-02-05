@@ -86,6 +86,9 @@ $user = \App\Models\User::query()->create([
 
 $user->avatar # this get a link of image that uploaded.
 ```
+```
+Note: to skip the avatar file when it's empty you must escape file with NULL as string
+```
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!
 ## License
