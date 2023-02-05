@@ -49,7 +49,7 @@ class User extends model
      *
      * @var array<string, string>
      */
-    protected $uploadable = [
+    public $uploadable = [
         'avatar'    => 'users/profile',
     ];
 }
