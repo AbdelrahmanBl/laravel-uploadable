@@ -4,7 +4,7 @@ namespace Bl\LaravelUploadable\Actions;
 
 use Illuminate\Support\Facades\Storage;
 
-class DeleteFile
+class DeleteFileAction
 {
     /**
      * handle deleting a file.
@@ -13,7 +13,7 @@ class DeleteFile
      * @param  array  $attributes
      * @return void
      */
-    public function handle(string $key, array $attributes): void
+    public function handle(string $key, array $attributes)
     {
         if(array_key_exists($key, $attributes) && !empty($attributes[$key])) {
 

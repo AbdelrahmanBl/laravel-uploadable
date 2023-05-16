@@ -1,13 +1,13 @@
 <?php
 
-namespace Bl\LaravelUploadable\Traits;
+namespace Bl\LaravelUploadable\Classes;
 
-use Bl\LaravelUploadable\Actions\GetFileUrl;
+use Bl\LaravelUploadable\Actions\GetFileUrlAction;
+use Bl\LaravelUploadable\Actions\UploadFileAction;
+use Bl\LaravelUploadable\Contracts\UploadFileContract;
 
-trait CanUploadFile
+class PublicUploadFileAttribute extends UploadFileAttribute implements UploadFileContract
 {
-    use HasUploadable;
-
     /**
      * when trying to get attribute from model.
      *
@@ -17,11 +17,11 @@ trait CanUploadFile
      * @param  array    $uploadable
      * @return mixed
      */
-    public function __getFileAttribute($key, $value, $attributes, $uploadable): mixed
+    public function getAttributeFile($key, $value, $attributes, $uploadable): mixed
     {
         if($this->isUploadableKey($key, $uploadable)) {
 
-            return (new GetFileUrl)->handle($value);
+            return (new GetFileUrlAction)->handle($value);
 
         }
 
@@ -37,13 +37,15 @@ trait CanUploadFile
      * @param  array    $uploadable
      * @return mixed
      */
-    public function __setFileAttribute($key, $value, $attributes, $uploadable): mixed
+    public function setAttributeFile($key, $value, $attributes, $uploadable): mixed
     {
+        $this->checkUploadedFile($key, $value);
+
         if($this->isUploadableKey($key, $uploadable)) {
 
             if(! empty($uploadable[$key])) {
 
-                return $this->uploadFile($key, $value, $uploadable[$key], $attributes);
+                return (new UploadFileAction)->handle($key, $value, $uploadable[$key], $attributes);
 
             }
 
@@ -52,17 +54,5 @@ trait CanUploadFile
         }
 
         return $value;
-    }
-
-    /**
-     * determine if the current field is uploadable key or not.
-     *
-     * @param  string   $key
-     * @param  array    $uploadable
-     * @return bool
-     */
-    protected function isUploadableKey($key, $uploadable): bool
-    {
-        return is_array($uploadable) && array_key_exists($key, $uploadable);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Bl\LaravelUploadable\Casts;
 
+use Bl\LaravelUploadable\Classes\AwsUploadFileAttribute;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Bl\LaravelUploadable\Classes\PublicUploadFileAttribute;
 
-class FileCast extends PublicUploadFileAttribute implements CastsAttributes
+class AwsFileCast extends AwsUploadFileAttribute implements CastsAttributes
 {
     /**
-     * Cast the given value.
+     * TODO: Cast the given value.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string   $key
@@ -18,11 +18,11 @@ class FileCast extends PublicUploadFileAttribute implements CastsAttributes
      */
     public function get($model, $key, $value, $attributes)
     {
-        return $this->getAttributeFile($key, $value, $attributes, $model->uploadable);
+        // ...
     }
 
     /**
-     * Prepare the given value for storage.
+     * TODO: Prepare the given value for storage.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string   $key
@@ -32,6 +32,6 @@ class FileCast extends PublicUploadFileAttribute implements CastsAttributes
      */
     public function set($model, $key, $value, $attributes)
     {
-        return $this->setAttributeFile($key, $value, $attributes, $model->uploadable);
+        // ...
     }
 }

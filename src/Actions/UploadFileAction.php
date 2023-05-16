@@ -1,11 +1,10 @@
 <?php
 
-namespace Bl\LaravelUploadable\Traits;
+namespace Bl\LaravelUploadable\Actions;
 
-use Bl\LaravelUploadable\Actions\DeleteFile;
 use Illuminate\Http\UploadedFile;
 
-trait HasUploadable
+class UploadFileAction
 {
     /**
      * Upload file to specific directory and store the path in the table field.
@@ -16,11 +15,11 @@ trait HasUploadable
      * @param  array         $attributes
      * @return string|null
      */
-    public function uploadFile(string $key, mixed $file, string $dir, array $attributes): ?string
+    public function handle(string $key, mixed $file, string $dir, array $attributes)
     {
         if($file instanceof UploadedFile) {
 
-            (new DeleteFile)->handle($key, $attributes);
+            (new DeleteFileAction)->handle($key, $attributes);
 
             return $file->store($dir);
 

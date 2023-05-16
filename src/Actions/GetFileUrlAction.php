@@ -4,7 +4,7 @@ namespace Bl\LaravelUploadable\Actions;
 
 use Illuminate\Support\Facades\Storage;
 
-class GetFileUrl
+class GetFileUrlAction
 {
     /**
      * handle getting the file full url path.
@@ -12,7 +12,7 @@ class GetFileUrl
      * @param  string|null $path
      * @return string
      */
-    public function handle(?string $path): string
+    public function handle(string|null $path)
     {
         return $path ? Storage::url($path) : asset('uploadable.jpg');
     }
