@@ -13,25 +13,19 @@ This package uses the [Laravel File Storage](https://laravel.com/docs/9.x/filesy
 ```
 php artisan storage:link
 ```
-And then, configure your default filesystem, inside config/filesystems.php to point the public disk:
-```
-'default' => env('FILESYSTEM_DRIVER', 'public'),
-```
-Or you can configure your default filesystem, from .env file 
+And then, configure your default filesystem, from .env file 
 ```
 APP_URL=https://your-domain.com
-FILESYSTEM_DRIVER=public
 ```
 ## Usage
 To use this package, import the HasUploadable trait in your model:
 And then, configure your uploadable fields for images and files inside your model.
 ```
-use Bl\LaravelUploadable\HasUploadable;
+use Bl\LaravelUploadable\Casts\FileCast;    # For public disk driver
+use Bl\LaravelUploadable\Casts\S3FileCast;  # For s3 disk driver
 
 class User extends model 
 {
-    use HasUploadable;
-
     /**
      * add all fields for files or images to model $fillable when you don't use model $guarded.
      *
@@ -43,16 +37,20 @@ class User extends model
     ];
 
     /**
-     * $uploadable consists of an associative array.
-     * the key determine the field name that has uploadFile
-     * the value determine the directory to save the file in it
+     * The attributes that should be cast.
      *
      * @var array<string, string>
      */
-    public $uploadable = [
-        'avatar'    => 'users/profile',
+    protected $casts = [
+        ...,
+        'avatar' => FileCast::class,
     ];
 }
+```
+Note: You can customize the store directory by adding concatination and ':' operator then your custom directory.
+like this
+```
+'avatar' => FileCast::class . ':User/avatar', # this is the default value ( the attribute key name inside the model basename ) 
 ```
 That's all! After this configuration, you can send file data from the client side with the same name of each file field of the model. The package will make the magic!
 ## Example
@@ -81,13 +79,10 @@ $user->avatar # this get a link of image that uploaded.
 Or you can set the data manually to the User model.
 ```
 $user = \App\Models\User::query()->create([
-    'avatar'    => $request->file('avatar') ?? 'NULL'
+    'avatar'    => $request->file('avatar')
 ]);
 
 $user->avatar # this get a link of image that uploaded.
-```
-```
-Note: to skip the avatar file when it's empty you must escape file with NULL as string
 ```
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!
