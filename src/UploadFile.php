@@ -3,11 +3,12 @@
 namespace Bl\LaravelUploadable;
 
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
-use Exception;
 use Illuminate\Http\UploadedFile;
 
 class UploadFile
 {
+    protected $directory;
+
     protected $driver;
 
     public function __construct(UploadFileInterface $driver)
@@ -26,13 +27,7 @@ class UploadFile
      */
     public function get($model, $key, $value, $attributes)
     {
-        if($this->isUploadableKey($key, $model->uploadable)) {
-
-            return $this->driver->get($value) ?? asset(config('filesystems.uploadable', 'uploadable.jpg'));
-
-        }
-
-        return $value;
+        return $value ? $this->driver->get($value) : asset(config('filesystems.uploadable', 'uploadable.jpg'));
     }
 
     /**
@@ -46,51 +41,16 @@ class UploadFile
      */
     public function set($model, $key, $value, $attributes)
     {
-        $uploadable = $model->uploadable;
+        if($value instanceof UploadedFile) {
 
-        $this->checkUploadedFile($key, $value);
+            $directory = $this->directory ?? class_basename($model) . '/' . $key;
 
-        if($this->isUploadableKey($key, $uploadable)) {
-
-            if(! empty($uploadable[$key])) {
-
-                return $this->uploadFile($key, $value, $uploadable[$key], $attributes);
-
-            }
-
-            return $attributes[$key];
+            return $this->uploadFile($key, $value, $directory, $attributes);
 
         }
 
-        return $value;
-    }
+        return $attributes[$key];
 
-    /**
-     * determine if the current field is uploadable key or not.
-     *
-     * @param  string   $key
-     * @param  array    $uploadable
-     * @return bool
-     */
-    protected function isUploadableKey($key, $uploadable): bool
-    {
-        return is_array($uploadable) && array_key_exists($key, $uploadable);
-    }
-
-    /**
-     * determine that the uploaded file must be instance of \Illuminate\Http\UploadedFile
-     *
-     * @param  string $key
-     * @param  mixed  $file
-     * @return void
-     */
-    protected function checkUploadedFile($key, $file): void
-    {
-        if(! $file instanceof UploadedFile && $file !== 'NULL') {
-
-            throw new Exception("The {$key} attribute value must be instance of " . UploadedFile::class . ' or NULL as a string');
-
-        }
     }
 
     /**
@@ -106,7 +66,11 @@ class UploadFile
     {
         if($file instanceof UploadedFile) {
 
-            $this->driver->delete($key, $attributes);
+            if(array_key_exists($key, $attributes) && !empty($attributes[$key])) {
+
+                $this->driver->delete($key, $attributes);
+
+            }
 
             return $this->driver->store($file, $dir);
 

@@ -14,12 +14,12 @@ class S3DriverService implements UploadFileInterface
      * handle store proccess of the file.
      *
      * @param  UploadedFile $file
-     * @param  string $dir
+     * @param  string $directory
      * @return mixed
      */
-    public function store(UploadedFile $file, string $dir): mixed
+    public function store(UploadedFile $file, string $directory): mixed
     {
-        return $file->store($dir, $this->disk);
+        return $file->store($directory, $this->disk);
     }
 
     /**
@@ -42,10 +42,6 @@ class S3DriverService implements UploadFileInterface
      */
     public function delete(string $key, array $attributes): void
     {
-        if(array_key_exists($key, $attributes) && !empty($attributes[$key])) {
-
-            Storage::disk($this->disk)->delete($attributes[$key]);
-
-        }
+        Storage::disk($this->disk)->delete($attributes[$key]);
     }
 }

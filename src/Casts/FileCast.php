@@ -9,8 +9,12 @@ class FileCast extends UploadFile
 {
     protected $driver;
 
-    public function __construct()
+    protected $directory;
+
+    public function __construct($directory = NULL)
     {
+        $this->directory = $directory;
+
         $this->driver = new PublicDriverService;
     }
 }

@@ -9,8 +9,12 @@ class S3FileCast extends UploadFile
 {
     protected $driver;
 
-    public function __construct()
+    protected $directory;
+
+    public function __construct($directory)
     {
+        $this->directory = $directory;
+
         $this->driver = new S3DriverService;
     }
 
