@@ -10,7 +10,7 @@ class DriverService implements UploadFileInterface
 {
     protected $disk;
 
-    public function __construct(string|null $disk)
+    public function __construct(string|null $disk = NULL)
     {
         $this->disk = $disk ?? config('filesystems.default');
     }
@@ -46,6 +46,8 @@ class DriverService implements UploadFileInterface
      */
     public function delete(string|null $path): void
     {
-        Storage::disk($this->disk)->delete($path);
+        $path
+        ? Storage::disk($this->disk)->delete($path)
+        : NULL;
     }
 }
