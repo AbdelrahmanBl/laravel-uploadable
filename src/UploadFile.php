@@ -49,7 +49,7 @@ class UploadFile
 
         }
 
-        return $attributes[$key];
+        return $attributes[$key] ?? NULL;
 
     }
 
