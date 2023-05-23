@@ -10,5 +10,5 @@ interface UploadFileInterface
 
     public function get(string|null $path): mixed;
 
-    public function delete(string $key, array $attributes): void;
+    public function delete(string $path): void;
 }

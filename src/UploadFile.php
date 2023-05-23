@@ -68,7 +68,7 @@ class UploadFile
 
             if(array_key_exists($key, $attributes) && !empty($attributes[$key])) {
 
-                $this->driver->delete($key, $attributes);
+                $this->driver->delete($attributes[$key]);
 
             }
 

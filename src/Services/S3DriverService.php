@@ -36,12 +36,11 @@ class S3DriverService implements UploadFileInterface
     /**
      * handle deleting a file.
      *
-     * @param  string $key
-     * @param  array  $attributes
+     * @param  string $path
      * @return void
      */
-    public function delete(string $key, array $attributes): void
+    public function delete(string $path): void
     {
-        Storage::disk($this->disk)->delete($attributes[$key]);
+        Storage::disk($this->disk)->delete($path);
     }
 }
