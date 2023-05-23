@@ -3,7 +3,7 @@
 namespace Bl\LaravelUploadable\Casts;
 
 use Bl\LaravelUploadable\UploadFile;
-use Bl\LaravelUploadable\Services\PublicDriverService;
+use Bl\LaravelUploadable\Services\DriverService;
 
 class FileCast extends UploadFile
 {
@@ -11,10 +11,10 @@ class FileCast extends UploadFile
 
     protected $directory;
 
-    public function __construct($directory = NULL)
+    public function __construct($directory = NULL, $disk = NULL)
     {
         $this->directory = $directory;
 
-        $this->driver = new PublicDriverService;
+        $this->driver = new DriverService($disk);
     }
 }

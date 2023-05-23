@@ -6,9 +6,14 @@ use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class PublicDriverService implements UploadFileInterface
+class DriverService implements UploadFileInterface
 {
-    protected $disk = 'public';
+    protected $disk;
+
+    public function __construct(string|null $disk)
+    {
+        $this->disk = $disk ?? config('filesystems.default');
+    }
 
     /**
      * handle store proccess of the file.
@@ -36,10 +41,10 @@ class PublicDriverService implements UploadFileInterface
     /**
      * handle deleting a file.
      *
-     * @param  string $path
+     * @param  string|null $path
      * @return void
      */
-    public function delete(string $path): void
+    public function delete(string|null $path): void
     {
         Storage::disk($this->disk)->delete($path);
     }
