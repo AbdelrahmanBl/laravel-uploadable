@@ -11,7 +11,7 @@ class FileCast extends UploadFile
 
     protected $directory;
 
-    public function __construct($directory = NULL, $disk = NULL)
+    public function __construct($directory = 'default', $disk = 'default')
     {
         $this->directory = $directory;
 

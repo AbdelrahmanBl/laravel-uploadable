@@ -43,7 +43,9 @@ class UploadFile
     {
         if($value instanceof UploadedFile) {
 
-            $directory = $this->directory ?? class_basename($model) . '/' . $key;
+            $directory = $this->directory === 'default'
+                        ? class_basename($model) . '/' . $key
+                        : $this->directory;
 
             return $this->uploadFile($key, $value, $directory, $attributes);
 
