@@ -9,20 +9,20 @@ This package can help you to upload images or any type of files to a destination
 composer require abdelrahmanbl/laravel-uploadable
 ```
 ## About Upload
-This package uses the [Laravel File Storage](https://laravel.com/docs/9.x/filesystem) to keep the file management. The files will be stored inside the default disk. For example, if you are using the public disk, to access the images or files, you need to create a symbolic link inside your project:
+This package uses the [Laravel File Storage](https://laravel.com/docs/10.x/filesystem) to keep the file management. The files will be stored inside the default disk. For example, if you are using the public disk, to access the images or files, you need to create a symbolic link inside your project:
 ```
-php artisan storage:link
+php artisan storage:link  # this command is only when public disk driver configuration
 ```
 And then, configure your default filesystem, from .env file 
 ```
 APP_URL=https://your-domain.com
+FILESYSTEM_DISK=public # public|local|s3
 ```
 ## Usage
 To use this package, import the HasUploadable trait in your model:
 And then, configure your uploadable fields for images and files inside your model.
 ```
-use Bl\LaravelUploadable\Casts\FileCast;    # For public disk driver
-use Bl\LaravelUploadable\Casts\S3FileCast;  # For s3 disk driver
+use Bl\LaravelUploadable\Casts\FileCast;
 
 class User extends model 
 {
@@ -50,7 +50,11 @@ class User extends model
 Note: You can customize the store directory by adding concatination and ':' operator then your custom directory.
 like this
 ```
-'avatar' => FileCast::class . ':User/avatar', # this is the default value ( the attribute key name inside the model basename ) 
+'avatar' => FileCast::class . ':User/avatar', # this is the default value ( model basename / attribute key name  ).
+```
+Note: You can customize the disk driver store by adding concatination and ',' operator then your custom disk.
+```
+'avatar' => FileCast::class . ':default,s3', # when you don't want to use the default disk you can assign it. 
 ```
 That's all! After this configuration, you can send file data from the client side with the same name of each file field of the model. The package will make the magic!
 ## Example
