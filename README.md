@@ -1,8 +1,8 @@
 # laravel-uploadable
-Laravel Uploadable for adding behaviour to a model for self uploading images like avatar or any files type.
+Laravel Uploadable for adding behaviour to a model for self uploading files like avatar or any files type.
 
 ## Introduction
-This package can help you to upload images or any type of files to a destination in your filesystem, you can determine a path for a directory to save your uploaded file for each field in your table with minimal configurations.
+This package can help you to upload images or any type of files to a specific destination in your filesystem, you can determine a path for a directory to save your uploaded file for each field in your table with minimal configurations or you can use the default store directory of the package.
 
 ## Installation
 ```
@@ -13,20 +13,21 @@ This package uses the [Laravel File Storage](https://laravel.com/docs/9.x/filesy
 ```
 php artisan storage:link
 ```
-And then, configure your default filesystem, from .env file 
+And then, configure your default filesystem from .env file 
 ```
 APP_URL=https://your-domain.com
+FILESYSTEM_DISK=public # or your prefered disk
 ```
 ## Usage
-To use this package, import the FileCast in your model:
-And then, configure the $casts of your model with the FileCast class.
+To use this package, import the FileCast in your model And then configure the $casts of your model with the FileCast class.
 ```
 use Bl\LaravelUploadable\Casts\FileCast;
 
 class User extends model 
 {
     /**
-     * add all fields for files or images to model $fillable when you don't use model $guarded.
+     * Don't forget 
+     * Add all the fields for files or images to the model $fillable when you don't use model $guarded.
      *
      * @var array
      */
@@ -52,7 +53,7 @@ class User extends model
 ```
 ## Customize The Disk
 ```
-'avatar' => FileCast::class . ':default,s3', # here we customized disk to s3. 
+'avatar' => FileCast::class . ':default,s3', # here we customized the disk to s3. 
 ```
 ## Customize The Driver
 ```
@@ -122,6 +123,7 @@ $user->save();
 
 $user->avatar # this get a link of image that uploaded.
 ```
+Note: when update a field with a file the package will automatic delete the old file and put the new one.
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!
 ## License
