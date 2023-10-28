@@ -10,9 +10,9 @@ class DriverService implements UploadFileInterface
 {
     protected $disk;
 
-    public function __construct(string $disk = 'default')
+    public function __construct(string $disk = '')
     {
-        $this->disk = $disk === 'default' ? '' : $disk;
+        $this->disk = $disk;
     }
 
     /**
