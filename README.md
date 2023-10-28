@@ -18,11 +18,10 @@ And then, configure your default filesystem, from .env file
 APP_URL=https://your-domain.com
 ```
 ## Usage
-To use this package, import the HasUploadable trait in your model:
-And then, configure your uploadable fields for images and files inside your model.
+To use this package, import the FileCast in your model:
+And then, configure the $casts of your model with the FileCast class.
 ```
-use Bl\LaravelUploadable\Casts\FileCast;    # For public disk driver
-use Bl\LaravelUploadable\Casts\S3FileCast;  # For s3 disk driver
+use Bl\LaravelUploadable\Casts\FileCast;
 
 class User extends model 
 {
@@ -47,10 +46,48 @@ class User extends model
     ];
 }
 ```
-Note: You can customize the store directory by adding concatination and ':' operator then your custom directory.
-like this
+## Customize The Directory
 ```
 'avatar' => FileCast::class . ':User/avatar', # this is the default value ( the attribute key name inside the model basename ) 
+```
+## Customize The Disk
+```
+'avatar' => FileCast::class . ':default,s3', # here we customized disk to s3. 
+```
+## Customize The Driver
+```
+'avatar' => FileCast::class . ':default,default,' . CustomDriverService::class, 
+```
+Note: your customer driver service must implement `Bl\LaravelUploadable\Interfaces\UploadFileInterface`
+and has a constructor with parameter $disk
+```
+use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
+use Illuminate\Http\UploadedFile;
+
+class CustomDriverService implements UploadFileInterface
+{
+    protected $disk;
+
+    public function __construct($disk)
+    {
+        $this->disk = $disk;
+    }
+
+    public function get(?string $path): mixed
+    {
+        // ...
+    }
+
+    public function store(UploadedFile $file, string $directory): mixed
+    {
+        // ...
+    }
+
+    public function delete(?string $path): void
+    {
+        // ...
+    }
+}
 ```
 That's all! After this configuration, you can send file data from the client side with the same name of each file field of the model. The package will make the magic!
 ## Example
@@ -70,17 +107,18 @@ In frontend you can create a form-data with field name avatar.
     </div>
 </form>
 ```
-In backend you can pass all the validated data to the User model.
+In backend you can pass all the data to the User model.
 ```
-$user = \App\Models\User::query()->create($request->validated());
+$data = $request->validated(); // or you can use $request->all() if you dont make a validation
+$user = \App\Models\User::query()->create($data);
 
 $user->avatar # this get a link of image that uploaded.
 ```
-Or you can set the data manually to the User model.
+You can update the file manually to the User model.
 ```
-$user = \App\Models\User::query()->create([
-    'avatar'    => $request->file('avatar')
-]);
+$user = \App\Models\User::query()->first();
+$user->avatar = $request->file('avatar');
+$user->save();
 
 $user->avatar # this get a link of image that uploaded.
 ```
