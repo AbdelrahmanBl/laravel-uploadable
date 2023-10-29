@@ -1,6 +1,6 @@
 <?php
 
-namespace Bl\LaravelUploadable;
+namespace Bl\LaravelUploadable\Casts;
 
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 use Illuminate\Http\UploadedFile;
@@ -27,7 +27,9 @@ class UploadFile
      */
     public function get($model, $key, $value, $attributes)
     {
-        return $value ? $this->driver->get($value) : asset(config('filesystems.uploadable', 'uploadable.jpg'));
+        return $value
+        ? $this->driver->get($value)
+        : asset(config('filesystems.default_url', 'uploadable.jpg'));
     }
 
     /**
@@ -43,41 +45,25 @@ class UploadFile
     {
         if($value instanceof UploadedFile) {
 
+            $file = $value;
+
+            // set default directory if not overwritten...
             $directory = $this->directory === 'default'
                         ? class_basename($model) . '/' . $key
                         : $this->directory;
 
-            return $this->uploadFile($key, $value, $directory, $attributes);
-
-        }
-
-        return $attributes[$key] ?? NULL;
-
-    }
-
-    /**
-     * Upload file to specific directory and store the path in the table field.
-     *
-     * @param  UploadedFile  $file
-     * @param  string        $key
-     * @param  string        $dir
-     * @param  array         $attributes
-     * @return string|null
-     */
-    protected function uploadFile(string $key, mixed $file, string $dir, array $attributes): mixed
-    {
-        if($file instanceof UploadedFile) {
-
-            if(array_key_exists($key, $attributes) && !empty($attributes[$key])) {
-
+            // handle delete old file if exists...
+            if(array_key_exists($key, $attributes) && ! empty($attributes[$key])) {
                 $this->driver->delete($attributes[$key]);
-
             }
 
-            return $this->driver->store($file, $dir);
+            // storing the file in the directory...
+            return $this->driver->store($file, $directory);
 
         }
 
-        return $attributes[$key] ?? null;
+        // return old value or null to skip the field update...
+        return $attributes[$key] ?? NULL;
+
     }
 }

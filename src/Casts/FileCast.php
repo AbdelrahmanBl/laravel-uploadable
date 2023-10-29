@@ -3,8 +3,8 @@
 namespace Bl\LaravelUploadable\Casts;
 
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
-use Bl\LaravelUploadable\UploadFile;
 use Bl\LaravelUploadable\Services\DriverService;
+use Exception;
 
 class FileCast extends UploadFile
 {
@@ -21,17 +21,19 @@ class FileCast extends UploadFile
             $disk = '';
         }
 
-        // overwrite driver if it exists...
+        // setting the default driver...
         if($driver === 'default') {
             $this->driver = new DriverService($disk);
         }
         else {
-            $this->driver = (
-                class_exists($driver) &&
-                new $driver($disk) instanceof UploadFileInterface
-            )
-            ? new $driver($disk)
-            : new DriverService($disk);
+            // checking the driver...
+            if(! (new $driver($disk) instanceof UploadFileInterface)) {
+                throw new Exception($driver . ' must be an instance of ' . UploadFileInterface::class);
+            }
+            // overwrite the driver...
+            $this->driver = new $driver($disk);
         }
+
+
     }
 }
