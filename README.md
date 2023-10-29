@@ -1,15 +1,15 @@
 # laravel-uploadable
-Laravel Uploadable for adding behaviour to a model for self uploading files like avatar or any files type.
+Laravel Uploadable for adding behaviour to a model for self uploading file like avatar or any file type.
 
 ## Introduction
-This package can help you to upload images or any type of files to a specific destination in your filesystem, you can determine a path for a directory to save your uploaded file for each field in your table with minimal configurations or you can use the default store directory of the package.
+This package can help you to upload image or any type of file to a specific destination in your filesystem, you can determine a path for a directory to save your uploaded file for each field in your table with minimal configurations or you can use the default store directory of the package.
 
 ## Installation
 ```
 composer require abdelrahmanbl/laravel-uploadable
 ```
 ## About Upload
-This package uses the [Laravel File Storage](https://laravel.com/docs/9.x/filesystem) to keep the file management. The files will be stored inside the default disk. For example, if you are using the public disk, to access the images or files, you need to create a symbolic link inside your project:
+This package uses the [Laravel File Storage](https://laravel.com/docs/9.x/filesystem) to keep the file management. The file will be stored inside the default disk. For example, if you are using the public disk, to access the image or file, you need to create a symbolic link inside your project:
 ```
 php artisan storage:link
 ```
@@ -29,7 +29,7 @@ class User extends model
 {
     /**
      * Don't forget 
-     * Add all the fields for files or images to the model $fillable when you don't use model $guarded.
+     * Add all the fields for file or image to the model $fillable when you don't use model $guarded.
      *
      * @var array
      */
