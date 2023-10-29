@@ -18,6 +18,8 @@ And then, configure your default filesystem from .env file
 APP_URL=https://your-domain.com
 FILESYSTEM_DISK=public # or your prefered disk
 ```
+You can add `default_url` to the filesystems config file to overwrite the default file url.
+The default file url is asset('uploadable.jpg').
 ## Usage
 To use this package, import the FileCast in your model And then configure the $casts of your model with the FileCast class.
 ```
@@ -69,7 +71,7 @@ class CustomDriverService implements UploadFileInterface
 {
     protected $disk;
 
-    public function __construct($disk)
+    public function __construct($disk = '')
     {
         $this->disk = $disk;
     }
@@ -124,6 +126,14 @@ $user->save();
 $user->avatar # this get a link of image that uploaded.
 ```
 Note: when update a field with a file the package will automatic delete the old file and put the new one.
+## Delete The File
+You can use either the package driver service or your custom driver service to delete the file.
+```
+$user = \App\Models\User::query()->first();
+$avatar = $user->getRawOriginal('avatar');
+(new DriverService)->delete($avatar); # delete the avatar file of user
+$user->delete(); # delete the user
+```
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!
 ## License
