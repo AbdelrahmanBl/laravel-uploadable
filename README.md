@@ -76,7 +76,7 @@ class CustomDriverService implements UploadFileInterface
         $this->disk = $disk;
     }
 
-    public function get(?string $path): mixed
+    public function get(string|null $path): mixed
     {
         // ...
     }
@@ -86,7 +86,7 @@ class CustomDriverService implements UploadFileInterface
         // ...
     }
 
-    public function delete(?string $path): void
+    public function delete(string|null $path): void
     {
         // ...
     }
