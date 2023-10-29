@@ -26,12 +26,13 @@ class FileCast extends UploadFile
             $this->driver = new DriverService($disk);
         }
         else {
-            // checking the driver...
-            if(! (new $driver($disk) instanceof UploadFileInterface)) {
-                throw new Exception($driver . ' must be an instance of ' . UploadFileInterface::class);
-            }
             // overwrite the driver...
             $this->driver = new $driver($disk);
+
+            // checking the driver...
+            if(! ($this->driver instanceof UploadFileInterface)) {
+                throw new Exception($driver . ' must be an instance of ' . UploadFileInterface::class);
+            }
         }
 
 

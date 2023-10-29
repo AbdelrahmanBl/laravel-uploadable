@@ -49,7 +49,7 @@ class UploadFile
 
             // set default directory if not overwritten...
             $directory = $this->directory === 'default'
-                        ? class_basename($model) . '/' . $key
+                        ? class_basename($model) . DIRECTORY_SEPARATOR . $key
                         : $this->directory;
 
             // handle delete old file if exists...
