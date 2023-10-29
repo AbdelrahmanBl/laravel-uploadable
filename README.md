@@ -131,7 +131,7 @@ You can use either the package driver service or your custom driver service to d
 ```
 $user = \App\Models\User::query()->first();
 $avatar = $user->getRawOriginal('avatar');
-(new DriverService)->delete($avatar); # delete the avatar file of user
+(new DriverService)->delete($avatar); # delete the user's avatar file
 $user->delete(); # delete the user
 ```
 ## Contributing
