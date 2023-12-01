@@ -127,7 +127,7 @@ $user->avatar # this get a link of image that uploaded.
 ```
 Note: when update a field with a file the package will automatic delete the old file and put the new one.
 ## Delete The File
-You can use FileCastRemover trait in your model that have castable file casts and when you deleting the model instance all related files will be deleted automatically.
+You can use FileCastRemover trait in your mode and when you deleting the model instance all the related files will be deleted automatically.
 ```
 
 use Bl\LaravelUploadable\Traits\FileCastRemover;
