@@ -127,11 +127,37 @@ $user->avatar # this get a link of image that uploaded.
 ```
 Note: when update a field with a file the package will automatic delete the old file and put the new one.
 ## Delete The File
-You can use either the package driver service or your custom driver service to delete the file.
+You can use FileCastRemover trait in your model that have castable file casts and when you deleting the model instance all related files will be deleted automatically.
+```
+
+use Bl\LaravelUploadable\Traits\FileCastRemover;
+
+class User extends Model
+{
+    use FileCastRemover;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'avatar',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'avatar' => FileCast::class,
+    ];
+}
+```
+And once the model instance is deleted all it's related files will be removed.
 ```
 $user = \App\Models\User::query()->first();
-$avatar = $user->getRawOriginal('avatar');
-(new DriverService)->delete($avatar); # delete the user's avatar file
 $user->delete(); # delete the user
 ```
 ## Contributing
