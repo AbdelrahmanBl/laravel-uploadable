@@ -2,6 +2,7 @@
 
 namespace Bl\LaravelUploadable\Casts;
 
+use Bl\LaravelUploadable\FileCastHelper;
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 use Illuminate\Http\UploadedFile;
 
@@ -45,12 +46,8 @@ class UploadFile
     {
         if($value instanceof UploadedFile) {
 
-            $file = $value;
-
             // set default directory if not overwritten...
-            $directory = $this->directory === 'default'
-                        ? class_basename($model) . DIRECTORY_SEPARATOR . $key
-                        : $this->directory;
+            $directory = FileCastHelper::getDirectoryPath($this->directory, $model, $key);
 
             // handle delete old file if exists...
             if(array_key_exists($key, $attributes) && ! empty($attributes[$key])) {
@@ -58,7 +55,7 @@ class UploadFile
             }
 
             // storing the file in the directory...
-            return $this->driver->store($file, $directory);
+            return $this->driver->store($value, $directory);
 
         }
 
