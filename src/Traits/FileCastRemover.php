@@ -9,7 +9,7 @@ trait FileCastRemover
 {
     protected static function bootFileCastRemover()
     {
-        static::deleting(function($instance) {
+        static::deleted(function($instance) {
 
             foreach($instance->casts as $attributeName => $parametersString) {
 
