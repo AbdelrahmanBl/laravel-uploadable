@@ -12,6 +12,8 @@ class UploadFile
 
     protected $driver;
 
+    protected $default;
+
     public function __construct(UploadFileInterface $driver)
     {
         $this->driver = $driver;
@@ -28,9 +30,16 @@ class UploadFile
      */
     public function get($model, $key, $value, $attributes)
     {
-        return $value
-        ? $this->driver->get($value)
-        : asset(config('filesystems.default_url', 'uploadable.jpg'));
+        if($value) {
+            return $this->driver->get($value);
+        }
+
+        // getting the default path when nullable...
+        return match(true) {
+            $this->default === 'default' => asset(config('filesystems.default_url', 'uploadable.jpg')),
+            in_array($this->default, ['null', 'nullable']) => null,
+            default => asset($this->default),
+        };
     }
 
     /**

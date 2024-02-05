@@ -92,6 +92,12 @@ class CustomDriverService implements UploadFileInterface
     }
 }
 ```
+## Customize The Default Path
+```
+'avatar' => FileCast::class . ':default,default,default,null', # customize the default value to null. 
+'avatar' => FileCast::class . ':default,default,default,nullable', # customize the default value to null. 
+'avatar' => FileCast::class . ':default,default,default,avatar.png', # customize the default value to asset('avatar.png'). 
+```
 That's all! After this configuration, you can send file data from the client side with the same name of each file field of the model. The package will make the magic!
 ## Example
 In frontend you can create a form-data with field name avatar.
