@@ -2,59 +2,29 @@
 
 namespace Bl\LaravelUploadable;
 
-use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
+use Bl\LaravelUploadable\Classes\FileArgument;
 use Bl\LaravelUploadable\Services\DriverService;
-use Exception;
 
 class FileCastHelper
 {
     /**
-     * overwrite disk with empty string to use default disk from filesystems config...
-     *
-     * @param  string $disk
-     * @return string
-     */
-    public static function getDiskName($disk)
-    {
-        if($disk === 'default') {
-            $disk = '';
-        }
-
-        return $disk;
-    }
-
-    /**
      * get default driver instance or overwrite it...
      *
-     * @param  string $disk
-     * @param  string $driver
-     * @return object
+     * @param  \Bl\LaravelUploadable\Classes\FileArgument $disk
+     * @param  \Bl\LaravelUploadable\Classes\FileArgument $driver
+     * @return \Bl\LaravelUploadable\Interfaces\UploadFileInterface
      */
     public static function getDriverInstance($disk, $driver)
     {
-        $disk = static::getDiskName($disk);
-
-        // setting the default driver...
-        if($driver === 'default') {
-            $driver = new DriverService($disk);
-        }
-        else {
-            // overwrite the driver...
-            $driver = new $driver($disk);
-
-            // checking the driver...
-            if(! ($driver instanceof UploadFileInterface)) {
-                throw new Exception($driver . ' must be an instance of ' . UploadFileInterface::class);
-            }
-        }
-
-        return $driver;
+        return $driver->isDefault()
+        ? new DriverService($disk)
+        : new ($driver->getValue())($disk);
     }
 
     /**
      * get default directory path or customize it...
      *
-     * @param  string $directory
+     * @param  \Bl\LaravelUploadable\Classes\FileArgument $directory
      * @param  object $model
      * @param  string $key
      * @return string
@@ -62,41 +32,45 @@ class FileCastHelper
     public static function getDirectoryPath($directory, $model, $key)
     {
         // set the default directory...
-        if($directory === 'default') {
-            $directory = class_basename($model);
+        if($directory->isDefault()) {
+            $directory->setValue(class_basename($model));
         }
 
-        return $directory  . DIRECTORY_SEPARATOR . $key;
+        return $directory->getValue()  . DIRECTORY_SEPARATOR . $key;
     }
 
     /**
      * get file cast parameters as an array...
      *
-     * @param  mixed $parametersString
-     * @return void
+     * @param  string $parametersString
+     * @return array<\Bl\LaravelUploadable\Classes\FileArgument>
      */
     public static function getCastingParameters($parametersString)
     {
-        $directory = 'default';
-        $disk = 'default';
-        $driver = 'default';
+        $disk = new FileArgument();
+        $driver = new FileArgument();
+        $directory = new FileArgument();
 
         $parametersArray = explode(',', $parametersString);
-        $parametersArrayCount = count($parametersArray);
 
-        // setting the directory...
-        $parametersArray[0] = explode(':', $parametersArray[0])[1] ?? $directory;
+        // overwrite the first element in the parameters array with directory value...
+        $parametersArray[0] = explode(':', $parametersArray[0])[1] ?? $directory->getValue();
 
         // parsing parameters...
-        switch ($parametersArrayCount) {
+        switch (count($parametersArray)) {
             case 1:
-                list($directory) = $parametersArray;
+                $directory->setValue($parametersArray[0]);
                 break;
             case 2:
-                list($directory, $disk) = $parametersArray;
+                $directory->setValue($parametersArray[0]);
+                $disk->setValue($parametersArray[1]);
+
                 break;
             case 3:
-                list($directory, $disk, $driver) = $parametersArray;
+                $directory->setValue($parametersArray[0]);
+                $disk->setValue($parametersArray[1]);
+                $driver->setValue($parametersArray[2]);
+
                 break;
         }
 

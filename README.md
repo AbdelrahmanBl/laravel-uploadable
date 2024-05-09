@@ -71,21 +71,46 @@ class CustomDriverService implements UploadFileInterface
 {
     protected $disk;
 
-    public function __construct($disk = '')
+    /**
+     * __construct
+     *
+     * @param  \Bl\LaravelUploadable\Classes\FileArgument $disk
+     * @return void
+     */
+    public function __construct($disk)
     {
-        $this->disk = $disk;
+        $this->disk = $disk->getValue();
     }
 
-    public function get(string|null $path): mixed
-    {
-        // ...
-    }
-
+    /**
+     * handle store proccess of the file.
+     *
+     * @param  UploadedFile $file
+     * @param  string $directory
+     * @return mixed
+     */
     public function store(UploadedFile $file, string $directory): mixed
     {
         // ...
     }
 
+    /**
+     * handle getting the file full url path.
+     *
+     * @param  string|null $path
+     * @return string
+     */
+    public function get(string|null $path): mixed
+    {
+        // ...
+    }
+
+    /**
+     * handle deleting a file.
+     *
+     * @param  string|null $path
+     * @return void
+     */
     public function delete(string|null $path): void
     {
         // ...
@@ -118,18 +143,39 @@ In frontend you can create a form-data with field name avatar.
 ```
 In backend you can pass all the data to the User model.
 ```
-$data = $request->validated(); // or you can use $request->all() if you dont make a validation
-$user = \App\Models\User::query()->create($data);
+/**
+ * Handle the incoming request.
+ */
+public function store(UploadRequest $request)
+{
+    $user = \App\Models\User::query()->create(
+        $request->validated() // or you can use $request->all() if you don't make a validation
+    );
 
-$user->avatar # this get a link of image that uploaded.
+    // refresh the user instance to force updating the casting attributes.
+    $user->refresh();
+
+    // this get a link of the image that uploaded.
+    $user->avatar;
+}
 ```
 You can update the file manually to the User model.
 ```
-$user = \App\Models\User::query()->first();
-$user->avatar = $request->file('avatar');
-$user->save();
+/**
+ * Handle the incoming request.
+ */
+public function store(UploadRequest $request)
+{
+    $user = \App\Models\User::query()->first();
+    $user->avatar = $request->file('avatar');
+    $user->save();
 
-$user->avatar # this get a link of image that uploaded.
+    // refresh the user instance to force updating the casting attributes.
+    $user->refresh();
+
+    // this get a link of the image that uploaded.
+    $user->avatar;
+}
 ```
 Note: when update a field with a file the package will automatic delete the old file and put the new one.
 ## Delete The File
@@ -163,8 +209,13 @@ class User extends Model
 ```
 And once the model instance is deleted all it's related files will be removed.
 ```
-$user = \App\Models\User::query()->first();
-$user->delete(); # delete the user
+/**
+ * Remove the user.
+ */
+public function destroy(User $user)
+{
+    $user->delete();
+}
 ```
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!

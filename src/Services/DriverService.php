@@ -2,17 +2,23 @@
 
 namespace Bl\LaravelUploadable\Services;
 
-use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 
 class DriverService implements UploadFileInterface
 {
     protected $disk;
 
-    public function __construct(string $disk = '')
+    /**
+     * __construct
+     *
+     * @param  \Bl\LaravelUploadable\Classes\FileArgument $disk
+     * @return void
+     */
+    public function __construct($disk)
     {
-        $this->disk = $disk;
+        $this->disk = $disk->isDefault() ? '' : $disk->getValue();
     }
 
     /**
