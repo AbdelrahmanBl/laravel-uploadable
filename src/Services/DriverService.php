@@ -36,10 +36,10 @@ class DriverService implements UploadFileInterface
     /**
      * handle getting the file full url path.
      *
-     * @param  string|null $path
+     * @param  string $path
      * @return string
      */
-    public function get(string|null $path): mixed
+    public function get(string $path): mixed
     {
         return Storage::disk($this->disk)->url($path);
     }
