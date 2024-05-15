@@ -1,14 +1,15 @@
 <?php
 
-namespace Bl\LaravelUploadable\Services;
+namespace Bl\LaravelUploadable\Test;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 
-class DriverService implements UploadFileInterface
+class CustomDriverService implements UploadFileInterface
 {
     protected $disk;
+
+    public static $uploadDir = 'uploads/';
 
     /**
      * __construct
@@ -18,7 +19,7 @@ class DriverService implements UploadFileInterface
      */
     public function __construct($disk)
     {
-        $this->disk = $disk->isDefault() ? '' : $disk->getValue();
+        $this->disk = $disk->getValue();
     }
 
     /**
@@ -30,7 +31,9 @@ class DriverService implements UploadFileInterface
      */
     public function store(UploadedFile $file, string $directory): mixed
     {
-        return $file->store($directory, $this->disk);
+        $uploadedDir = self::$uploadDir . $directory;
+
+        return $file->storePublicly($uploadedDir);
     }
 
     /**
@@ -41,7 +44,7 @@ class DriverService implements UploadFileInterface
      */
     public function get(string|null $path): mixed
     {
-        return Storage::disk($this->disk)->url($path);
+        return url($path);
     }
 
     /**
@@ -52,6 +55,10 @@ class DriverService implements UploadFileInterface
      */
     public function delete(string $path): void
     {
-        Storage::disk($this->disk)->delete($path);
+        $path = storage_path('app/public/' . $path);
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 }

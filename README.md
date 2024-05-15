@@ -108,10 +108,10 @@ class CustomDriverService implements UploadFileInterface
     /**
      * handle deleting a file.
      *
-     * @param  string|null $path
+     * @param  string $path
      * @return void
      */
-    public function delete(string|null $path): void
+    public function delete(string $path): void
     {
         // ...
     }

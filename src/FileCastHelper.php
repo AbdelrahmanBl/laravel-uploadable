@@ -33,10 +33,10 @@ class FileCastHelper
     {
         // set the default directory...
         if($directory->isDefault()) {
-            $directory->setValue(class_basename($model));
+            $directory->setValue(class_basename($model) . DIRECTORY_SEPARATOR . $key);
         }
 
-        return $directory->getValue()  . DIRECTORY_SEPARATOR . $key;
+        return $directory->getValue();
     }
 
     /**

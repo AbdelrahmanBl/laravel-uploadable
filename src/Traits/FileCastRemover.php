@@ -24,7 +24,9 @@ trait FileCastRemover
                     $filePath = $instance->getRawOriginal($attributeName);
 
                     // deleting the file from it's path...
-                    $driver->delete($filePath);
+                    if($filePath) {
+                        $driver->delete($filePath);
+                    }
 
                 }
 
