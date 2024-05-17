@@ -11,7 +11,7 @@ class LaravelUploadableTest extends TestCase
     {
         $user = User::query()->create([
             'default_avatar' => (new FileFactory)->image('avatar')
-        ])->refresh();
+        ]);
 
         $avatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
 
@@ -30,7 +30,7 @@ class LaravelUploadableTest extends TestCase
     {
         $user = User::query()->create([
             'custom_avatar_directory' => (new FileFactory)->image('avatar')
-        ])->refresh();
+        ]);
 
         $avatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('custom_avatar_directory'));
 
@@ -49,7 +49,7 @@ class LaravelUploadableTest extends TestCase
     {
         $user = User::query()->create([
             'custom_avatar_disk' => (new FileFactory)->image('avatar')
-        ])->refresh();
+        ]);
 
         $avatarLink = '/storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('custom_avatar_disk');
 
@@ -68,7 +68,7 @@ class LaravelUploadableTest extends TestCase
     {
         $user = User::query()->create([
             'custom_avatar_driver' => (new FileFactory)->image('avatar')
-        ])->refresh();
+        ]);
 
         $avatarLink = url($user->getRawOriginal('custom_avatar_driver'));
 
@@ -87,7 +87,7 @@ class LaravelUploadableTest extends TestCase
     {
         $user = User::query()->create([
             'custom_avatar_default_path' => NULL
-        ])->refresh();
+        ]);
 
         $avatarLink = url('custom_default_path.png');
 
@@ -98,7 +98,7 @@ class LaravelUploadableTest extends TestCase
     {
         $user = User::query()->create([
             'custom_avatar_default_path_with_nullable' => NULL
-        ])->refresh();
+        ]);
 
         $this->assertEquals(NULL, $user->custom_avatar_default_path_with_nullable);
     }

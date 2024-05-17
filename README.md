@@ -152,11 +152,8 @@ public function store(UploadRequest $request)
         $request->validated() // or you can use $request->all() if you don't make a validation
     );
 
-    // refresh the user instance to force updating the casting attributes.
-    $user->refresh();
-
     // this get a link of the image that uploaded.
-    $user->avatar;
+    $user->avatar; # https://domain.com/storage/User/avatar/U4q6En4mOHMJj0.png
 }
 ```
 You can update the file manually to the User model.
@@ -170,11 +167,8 @@ public function store(UploadRequest $request)
     $user->avatar = $request->file('avatar');
     $user->save();
 
-    // refresh the user instance to force updating the casting attributes.
-    $user->refresh();
-
     // this get a link of the image that uploaded.
-    $user->avatar;
+    $user->avatar; # https://domain.com/storage/User/avatar/U4q6En4mOHMJj0.png
 }
 ```
 Note: when update a field with a file the package will automatic delete the old file and put the new one.

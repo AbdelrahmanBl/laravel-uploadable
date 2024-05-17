@@ -83,10 +83,15 @@ class FileCast
             }
 
             // storing the file in the directory...
-            return $this->driver->store(
+            $storedPath = $this->driver->store(
                 $value,
                 FileCastHelper::getDirectoryPath($this->directory, $model, $key)
             );
+
+            // overwrite the model with the stored path...
+            $model->{$key} = $storedPath;
+
+            return $storedPath;
 
         }
 
