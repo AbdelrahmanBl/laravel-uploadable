@@ -9,7 +9,7 @@ This package can help you to upload image or any type of file to a specific dest
 composer require abdelrahmanbl/laravel-uploadable
 ```
 ## About Upload
-This package uses the [Laravel File Storage](https://laravel.com/docs/9.x/filesystem) to keep the file management. The file will be stored inside the default disk. For example, if you are using the public disk, to access the image or file, you need to create a symbolic link inside your project:
+This package uses the [Laravel File Storage](https://laravel.com/docs/11.x/filesystem) to keep the file management. The file will be stored inside the default disk. For example, if you are using the public disk, to access the image or file, you need to create a symbolic link inside your project:
 ```
 php artisan storage:link
 ```
@@ -214,4 +214,4 @@ public function destroy(User $user)
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!
 ## License
-BL
+The MIT License (MIT). Please see [License File](license.md) for more information.
