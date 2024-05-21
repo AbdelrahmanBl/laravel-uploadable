@@ -7,7 +7,7 @@ use Bl\LaravelUploadable\Test\User;
 
 class LaravelUploadableTest extends TestCase
 {
-    public function test_it_can_update_avatar_with_default_values()
+    public function test_it_can_create_avatar_with_default_values()
     {
         $user = User::query()->create([
             'default_avatar' => (new FileFactory)->image('avatar')
@@ -26,7 +26,7 @@ class LaravelUploadableTest extends TestCase
         $this->assertFileDoesNotExist($avatarPath);
     }
 
-    public function test_it_can_update_avatar_with_custom_directory()
+    public function test_it_can_create_avatar_with_custom_directory()
     {
         $user = User::query()->create([
             'custom_avatar_directory' => (new FileFactory)->image('avatar')
@@ -45,7 +45,7 @@ class LaravelUploadableTest extends TestCase
         $this->assertFileDoesNotExist($avatarPath);
     }
 
-    public function test_it_can_update_avatar_with_custom_disk()
+    public function test_it_can_create_avatar_with_custom_disk()
     {
         $user = User::query()->create([
             'custom_avatar_disk' => (new FileFactory)->image('avatar')
@@ -64,7 +64,7 @@ class LaravelUploadableTest extends TestCase
         $this->assertFileDoesNotExist($avatarPath);
     }
 
-    public function test_it_can_update_avatar_with_custom_driver()
+    public function test_it_can_create_avatar_with_custom_driver()
     {
         $user = User::query()->create([
             'custom_avatar_driver' => (new FileFactory)->image('avatar')
@@ -83,7 +83,7 @@ class LaravelUploadableTest extends TestCase
         $this->assertFileDoesNotExist($avatarPath);
     }
 
-    public function test_it_can_update_avatar_with_custom_default_path()
+    public function test_it_can_create_avatar_with_custom_default_path()
     {
         $user = User::query()->create([
             'custom_avatar_default_path' => NULL
@@ -94,12 +94,43 @@ class LaravelUploadableTest extends TestCase
         $this->assertEquals($avatarLink, $user->custom_avatar_default_path);
     }
 
-    public function test_it_can_update_avatar_with_custom_default_path_with_nullable()
+    public function test_it_can_create_avatar_with_custom_default_path_with_nullable()
     {
         $user = User::query()->create([
             'custom_avatar_default_path_with_nullable' => NULL
         ]);
 
         $this->assertEquals(NULL, $user->custom_avatar_default_path_with_nullable);
+    }
+
+    public function test_it_can_overwrite_old_avatar_when_updating()
+    {
+        $user = User::query()->create([
+            'default_avatar' => (new FileFactory)->image('avatar')
+        ]);
+
+        $oldAvatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $oldAvatarPath = storage_path('app/public' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $this->assertFileExists($oldAvatarPath);
+
+        $user->update([
+            'default_avatar' => (new FileFactory)->image('avatar')
+        ]);
+
+        $newAvatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $newAvatarPath = storage_path('app/public' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $this->assertNotEquals($oldAvatarLink, $newAvatarLink);
+
+        $this->assertFileDoesNotExist($oldAvatarPath);
+
+        $this->assertFileExists($newAvatarPath);
+
+        $user->delete();
+
+        $this->assertFileDoesNotExist($newAvatarPath);
     }
 }
