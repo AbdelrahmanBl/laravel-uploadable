@@ -82,11 +82,21 @@ class FileCast
                 $this->driver->delete($attributes[$key]);
             }
 
+            // handle before file upload event...
+            if(method_exists($model, 'beforeFileCastUpload')) {
+                $value = $model->beforeFileCastUpload($value);
+            }
+
             // storing the file in the directory...
             $storedPath = $this->driver->store(
                 $value,
                 FileCastHelper::getDirectoryPath($this->directory, $model, $key)
             );
+
+            // handle after file upload event...
+            if(method_exists($model, 'afterFileCastUpload')) {
+                $value = $model->afterFileCastUpload($value);
+            }
 
             // overwrite the model with the stored path...
             $model->{$key} = $storedPath;
