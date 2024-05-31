@@ -5,6 +5,7 @@ namespace Bl\LaravelUploadable\Casts;
 use Illuminate\Http\UploadedFile;
 use Bl\LaravelUploadable\FileCastHelper;
 use Bl\LaravelUploadable\Classes\FileArgument;
+use Bl\LaravelUploadable\Interfaces\EventUploadInterface;
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
 
 class FileCast
@@ -15,6 +16,10 @@ class FileCast
 
     protected FileArgument $default;
 
+    protected FileArgument $event;
+
+    protected EventUploadInterface $customEventService;
+
     /**
      * __construct
      *
@@ -22,9 +27,10 @@ class FileCast
      * @param  string $disk
      * @param  string $driver
      * @param  string $default
+     * @param  string $event
      * @return void
      */
-    public function __construct($directory = 'default', $disk = 'default', $driver = 'default', $default = 'default')
+    public function __construct($directory = 'default', $disk = 'default', $driver = 'default', $default = 'default', $event = 'default')
     {
         $this->directory = new FileArgument($directory);
 
@@ -33,6 +39,8 @@ class FileCast
 
         // the default value to return when nullable...
         $this->default = new FileArgument($default);
+
+        $this->event = new FileArgument($event);
     }
 
     /**
@@ -68,9 +76,9 @@ class FileCast
      * Prepare the given value for storage.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string   $key
-     * @param  \Illuminate\Http\UploadedFile        $value
-     * @param  array    $attributes
+     * @param  string  $key
+     * @param  \Illuminate\Http\UploadedFile  $value
+     * @param  array  $attributes
      * @return string
      */
     public function set($model, $key, $value, $attributes)
@@ -82,10 +90,14 @@ class FileCast
                 $this->driver->delete($attributes[$key]);
             }
 
-            // handle before file upload event...
-            if(method_exists($model, 'beforeFileCastUpload')) {
-                $value = $model->beforeFileCastUpload($value);
+            // set custom event service...
+            if($this->event->isCustom()) {
+                $this->customEventService = new ($this->event->getValue())();
             }
+
+            // handle before file upload global event...
+            // TODO apply test case & add to readMe
+            $value = $this->handleBeforeUpload($value, $model);
 
             // storing the file in the directory...
             $storedPath = $this->driver->store(
@@ -93,10 +105,9 @@ class FileCast
                 FileCastHelper::getDirectoryPath($this->directory, $model, $key)
             );
 
-            // handle after file upload event...
-            if(method_exists($model, 'afterFileCastUpload')) {
-                $value = $model->afterFileCastUpload($value);
-            }
+            // handle after file upload global event...
+            // TODO apply test case & add to readMe
+            $this->handleAfterUpload($value, $model);
 
             // overwrite the model with the stored path...
             $model->{$key} = $storedPath;
@@ -108,5 +119,40 @@ class FileCast
         // return old value or null to skip the field update...
         return $attributes[$key] ?? NULL;
 
+    }
+
+    /**
+     * handle before uploading the file.
+     *
+     * @param  \Illuminate\Http\UploadedFile $file
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @return \Illuminate\Http\UploadedFile
+     */
+    public function handleBeforeUpload($file, $model)
+    {
+        // custom event service...
+        if(isset($this->customEventService)) {
+            return $this->customEventService->before($file);
+        }
+
+        // global event service...
+        if(method_exists($model, 'beforeFileCastUpload')) {
+            return $model->beforeFileCastUpload($file);
+        }
+
+        return $file;
+    }
+
+    public function handleAfterUpload($file, $model)
+    {
+        // custom event service...
+        if(isset($this->customEventService)) {
+            $this->customEventService->after($file);
+        }
+
+        // global event service...
+        if(method_exists($model, 'afterFileCastUpload')) {
+            return $model->afterFileCastUpload($file);
+        }
     }
 }

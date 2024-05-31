@@ -51,27 +51,25 @@ class FileCastHelper
         $driver = new FileArgument();
         $directory = new FileArgument();
 
+        // unpacking parameters...
         $parametersArray = explode(',', $parametersString);
 
-        // overwrite the first element in the parameters array with directory value...
-        $parametersArray[0] = explode(':', $parametersArray[0])[1] ?? $directory->getValue();
+        // reset first element with custom directory value or null when default...
+        $parametersArray[0] = explode(':', $parametersArray[0])[1] ?? null;
 
-        // parsing parameters...
-        switch (count($parametersArray)) {
-            case 1:
-                $directory->setValue($parametersArray[0]);
-                break;
-            case 2:
-                $directory->setValue($parametersArray[0]);
-                $disk->setValue($parametersArray[1]);
+        // set custom directory...
+        if(! empty($parametersArray[0])) {
+            $directory->setValue($parametersArray[0]);
+        }
 
-                break;
-            case 3:
-                $directory->setValue($parametersArray[0]);
-                $disk->setValue($parametersArray[1]);
-                $driver->setValue($parametersArray[2]);
+        // set custom disk...
+        if(! empty($parametersArray[1])) {
+            $disk->setValue($parametersArray[1]);
+        }
 
-                break;
+        // set custom driver...
+        if(! empty($parametersArray[2])) {
+            $driver->setValue($parametersArray[2]);
         }
 
         return [

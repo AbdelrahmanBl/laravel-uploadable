@@ -43,6 +43,16 @@ class FileArgument
     }
 
     /**
+     * check if the arugment value is custom or not.
+     *
+     * @return bool
+     */
+    public function isCustom()
+    {
+        return ! $this->isDefault();
+    }
+
+    /**
      * check if the arugment value is [null|nullable] or not.
      *
      * @return void
