@@ -61,7 +61,7 @@ class User extends model
 ```
 'avatar' => FileCast::class . ':default,default,' . CustomDriverService::class, 
 ```
-Note: your customer driver service must implement `Bl\LaravelUploadable\Interfaces\UploadFileInterface`
+> **_Note:_** your customer driver service must implement `Bl\LaravelUploadable\Interfaces\UploadFileInterface`
 and has a constructor with parameter $disk
 ```
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;
@@ -171,7 +171,7 @@ public function store(UploadRequest $request)
     $user->avatar; # https://domain.com/storage/User/avatar/U4q6En4mOHMJj0.png
 }
 ```
-Note: when update a field with a file the package will automatic delete the old file and put the new one.
+> **_Note:_** when update a field with a file the package will automatic delete the old file and put the new one.
 ## Delete The File
 You can use the FileCastRemover trait in your model and when you deleting the model instance all the related files will be deleted automatically.
 ```
@@ -211,6 +211,75 @@ public function destroy(User $user)
     $user->delete();
 }
 ```
+## Apply The Events
+You can apply events either before or after the file upload. In addition to, you can apply that globally or for custom field. 
+### Global Events
+- For apply global events before the file upload you should define a method called `beforeFileCastUpload` in your model and it take one paramter with type `\Illuminate\Http\UploadedFile` and return the same type. 
+- For apply global events after the file uploaded you should define a void method called `afterFileCastUpload` in your model
+and it take one paramter with type `\Illuminate\Http\UploadedFile`.
+```
+use Illuminate\Http\UploadedFile;
+
+class User extends model 
+{
+    /**
+     * Apply before the file cast upload event.
+     *
+     * @param  UploadedFile $file
+     * @return UploadedFile
+     */
+    public function beforeFileCastUpload(UploadedFile $file): UploadedFile
+    {
+        return $file;
+    }
+
+    /**
+     * Apply after the file cast upload event.
+     *
+     * @param  UploadedFile $file
+     * @return void
+     */
+    public function afterFileCastUpload(UploadedFile $file): void
+    {
+        dd($file);
+    }
+}
+```
+### Custom Events
+For apply custom events you should create a service that implement `Bl\LaravelUploadable\Interfaces\EventUploadInterface` and path it as a parameter.
+```
+'avatar' => FileCast::class . ':default,default,default,default,' . CustomUploadService::class 
+```
+```
+use Bl\LaravelUploadable\Interfaces\EventUploadInterface;
+use Illuminate\Http\UploadedFile;
+
+class CustomUploadService implements EventUploadInterface
+{
+    /**
+     * Apply before the file cast upload event.
+     *
+     * @param  UploadedFile $file
+     * @return UploadedFile
+     */
+    public function before(UploadedFile $file): UploadedFile
+    {
+        return $file;
+    }
+
+    /**
+     * Apply after the file cast upload event.
+     *
+     * @param  UploadedFile $file
+     * @return void
+     */
+    public function after(UploadedFile $file): void
+    {
+        // ...
+    }
+}
+```
+> **_Note:_** when applying global and custom events in your model the priority go to the custom event.
 ## Contributing
 Feel free to comment, open issues and send PR's. Enjoy it!!
 ## License

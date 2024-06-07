@@ -130,12 +130,12 @@ class FileCast
      */
     public function handleBeforeUpload($file, $model)
     {
-        // custom event service...
+        // handle custom event service...
         if(isset($this->customEventService)) {
             return $this->customEventService->before($file);
         }
 
-        // global event service...
+        // handle global event service...
         if(method_exists($model, 'beforeFileCastUpload')) {
             return $model->beforeFileCastUpload($file);
         }
@@ -145,12 +145,12 @@ class FileCast
 
     public function handleAfterUpload($file, $model)
     {
-        // custom event service...
+        // handle custom event service...
         if(isset($this->customEventService)) {
             $this->customEventService->after($file);
         }
 
-        // global event service...
+        // handle global event service...
         if(method_exists($model, 'afterFileCastUpload')) {
             return $model->afterFileCastUpload($file);
         }
