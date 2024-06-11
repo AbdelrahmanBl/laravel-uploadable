@@ -275,7 +275,7 @@ class CustomUploadService implements EventUploadInterface
      */
     public function after(UploadedFile $file): void
     {
-        // ...
+        dd($file);
     }
 }
 ```
