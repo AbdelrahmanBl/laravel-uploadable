@@ -95,8 +95,7 @@ class FileCast
                 $this->customEventService = new ($this->event->getValue())();
             }
 
-            // handle before file upload global event...
-            // TODO apply test case & add to readMe
+            // handle before file upload events...
             $value = $this->handleBeforeUpload($value, $model);
 
             // storing the file in the directory...
@@ -105,8 +104,7 @@ class FileCast
                 FileCastHelper::getDirectoryPath($this->directory, $model, $key)
             );
 
-            // handle after file upload global event...
-            // TODO apply test case & add to readMe
+            // handle after file upload events...
             $this->handleAfterUpload($value, $model);
 
             // overwrite the model with the stored path...
@@ -148,11 +146,13 @@ class FileCast
         // handle custom event service...
         if(isset($this->customEventService)) {
             $this->customEventService->after($file);
+            return;
         }
 
         // handle global event service...
         if(method_exists($model, 'afterFileCastUpload')) {
-            return $model->afterFileCastUpload($file);
+            $model->afterFileCastUpload($file);
+            return;
         }
     }
 }

@@ -2,15 +2,18 @@
 
 namespace Bl\LaravelUploadable\Test;
 
-use Illuminate\Http\Testing\FileFactory;
-use Bl\LaravelUploadable\Test\User;
+use Bl\LaravelUploadable\Test\Models\CustomEventModel;
+use Bl\LaravelUploadable\Test\Models\GlobalEventModel;
+use Bl\LaravelUploadable\Test\Models\OverwriteEventModel;
+use Bl\LaravelUploadable\Test\Models\User;
+use Illuminate\Http\UploadedFile;
 
 class LaravelUploadableTest extends TestCase
 {
     public function test_it_can_create_avatar_with_default_values()
     {
         $user = User::query()->create([
-            'default_avatar' => (new FileFactory)->image('avatar')
+            'default_avatar' => UploadedFile::fake()->image('avatar')
         ]);
 
         $avatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
@@ -29,7 +32,7 @@ class LaravelUploadableTest extends TestCase
     public function test_it_can_create_avatar_with_custom_directory()
     {
         $user = User::query()->create([
-            'custom_avatar_directory' => (new FileFactory)->image('avatar')
+            'custom_avatar_directory' => UploadedFile::fake()->image('avatar')
         ]);
 
         $avatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('custom_avatar_directory'));
@@ -48,7 +51,7 @@ class LaravelUploadableTest extends TestCase
     public function test_it_can_create_avatar_with_custom_disk()
     {
         $user = User::query()->create([
-            'custom_avatar_disk' => (new FileFactory)->image('avatar')
+            'custom_avatar_disk' => UploadedFile::fake()->image('avatar')
         ]);
 
         $avatarLink = '/storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('custom_avatar_disk');
@@ -67,7 +70,7 @@ class LaravelUploadableTest extends TestCase
     public function test_it_can_create_avatar_with_custom_driver()
     {
         $user = User::query()->create([
-            'custom_avatar_driver' => (new FileFactory)->image('avatar')
+            'custom_avatar_driver' => UploadedFile::fake()->image('avatar')
         ]);
 
         $avatarLink = url($user->getRawOriginal('custom_avatar_driver'));
@@ -106,7 +109,7 @@ class LaravelUploadableTest extends TestCase
     public function test_it_can_overwrite_old_avatar_when_updating()
     {
         $user = User::query()->create([
-            'default_avatar' => (new FileFactory)->image('avatar')
+            'default_avatar' => UploadedFile::fake()->image('avatar')
         ]);
 
         $oldAvatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
@@ -116,7 +119,7 @@ class LaravelUploadableTest extends TestCase
         $this->assertFileExists($oldAvatarPath);
 
         $user->update([
-            'default_avatar' => (new FileFactory)->image('avatar')
+            'default_avatar' => UploadedFile::fake()->image('avatar')
         ]);
 
         $newAvatarLink = url('storage' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
@@ -132,5 +135,52 @@ class LaravelUploadableTest extends TestCase
         $user->delete();
 
         $this->assertFileDoesNotExist($newAvatarPath);
+    }
+
+    public function test_it_can_apply_global_events()
+    {
+        $image = UploadedFile::fake()->image('avatar');
+
+        $user = GlobalEventModel::query()->create([
+            'default_avatar' => $image,
+        ]);
+
+        $avatarPath = storage_path('app/public' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $this->assertLessThan($image->getSize(), filesize($avatarPath));
+
+        $this->assertFileEquals($avatarPath, session()->pull('GLOBAL_UPLOADED_FILE_PATH'));
+    }
+
+    public function test_it_can_apply_custom_events()
+    {
+        $image = UploadedFile::fake()->image('avatar');
+
+        $user = CustomEventModel::query()->create([
+            'default_avatar' => $image,
+        ]);
+
+        $avatarPath = storage_path('app/public' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $this->assertLessThan($image->getSize(), filesize($avatarPath));
+
+        $this->assertFileEquals($avatarPath, session()->pull('CUSTOM_UPLOADED_FILE_PATH'));
+    }
+
+    public function test_it_can_apply_custom_overwrite_global_events()
+    {
+        $image = UploadedFile::fake()->image('avatar');
+
+        $user = OverwriteEventModel::query()->create([
+            'default_avatar' => $image,
+        ]);
+
+        $avatarPath = storage_path('app/public' . DIRECTORY_SEPARATOR . $user->getRawOriginal('default_avatar'));
+
+        $this->assertLessThan($image->getSize(), filesize($avatarPath));
+
+        $this->assertNull(session()->pull('GLOBAL_UPLOADED_FILE_PATH'));
+
+        $this->assertFileEquals($avatarPath, session()->pull('CUSTOM_UPLOADED_FILE_PATH'));
     }
 }

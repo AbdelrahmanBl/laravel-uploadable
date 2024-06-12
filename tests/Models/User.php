@@ -1,9 +1,10 @@
 <?php
 
-namespace Bl\LaravelUploadable\Test;
+namespace Bl\LaravelUploadable\Test\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Bl\LaravelUploadable\Casts\FileCast;
+use Bl\LaravelUploadable\Test\Services\CustomDriverService;
 use Bl\LaravelUploadable\Traits\FileCastRemover;
 
 class User extends Model

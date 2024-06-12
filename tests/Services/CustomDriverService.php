@@ -1,6 +1,6 @@
 <?php
 
-namespace Bl\LaravelUploadable\Test;
+namespace Bl\LaravelUploadable\Test\Services;
 
 use Illuminate\Http\UploadedFile;
 use Bl\LaravelUploadable\Interfaces\UploadFileInterface;

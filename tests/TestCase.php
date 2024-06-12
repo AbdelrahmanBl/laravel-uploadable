@@ -5,7 +5,7 @@ namespace Bl\LaravelUploadable\Test;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Schema;
-use \Orchestra\Testbench\TestCase as Orchestra;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
